@@ -1,0 +1,7 @@
+RewriteEngine On # Activer le module Rewrite
+RewriteRule ^personne/?$ personne.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ personne.php?id=$1
+
+RewriteEngine On # Activer le module Rewrite
+RewriteRule ^livre/?$ livre.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ livre.php?id=$1
