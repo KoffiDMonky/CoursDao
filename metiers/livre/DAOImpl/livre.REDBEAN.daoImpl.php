@@ -1,74 +1,47 @@
 <?php
 
+include_once "Constantes.php";
+
+
 class daoImplLivreRedBean implements daoLivre
 {
 
-    private $db; //Instance de PDO
-    private $livres; //tableau de livres
-
-    function __construct($db, $livres)
-    {
-        $this->db = $db;
-        $this->livres = $livres;
-    }
-
-
     /**
-     * Ajoute une Livre à la liste de livres
-     * @param Livre $livre
-     */
-    public function ajoutLivre(Livre $livre): void
-    {
-        $this->livres[] = $livre;
-    }
-
-    /**
-     * Retourne toutes les livres de la liste
+     * Charge toutes les livres contenu dans la BDD
      * 
      */
-    public function getLivres()
+    public function avoirLivres()
     {
-        return $this->livres;
-    }
-
-    /**
-     * Charge toutes les livres contenu dans la BDD dans le tableau de livres
-     * 
-     */
-    public function chargementLivres(): void
-    {
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $mesLivres = R::findAll('livre');
         R::close();
 
-        //On créé les livres et on les ajoute dans le tableau "Livres"
-        foreach ($mesLivres as $livre) {
-            $p = new Livre($livre['idLivre'], $livre['titre'], $livre['genre'], $livre['auteur']);
-            $this->ajoutLivre($p);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($mesLivres, JSON_PRETTY_PRINT);
+
     }
 
-
     /**
-     * Rajoute une Livre dans la base de données
-     * @param Livre $idLivre
+     * Récupérer un livre via son identifiant
+     * @param int $idLivre
      */
-    public function getLivreById(Livre $idLivre)
+    public function avoirLivreParId(int $idLivre)
     {
-        for ($i = 0; $i < count($this->livres); $i++) {
-            if ($this->livres[$i]->getId() === $idLivre) {
-                return $this->livres[$i];
-            }
-        }
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $livre = R::load('livre', $idLivre);
+        R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($livre, JSON_PRETTY_PRINT);
     }
 
     /**
      * Rajoute une Livre dans la base de données
      * @param Livre $livre
      */
-    public function ajoutLivreBd(Livre $livre): void
+    public function ajoutLivreBd(Livre $livre)
     {
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
         $l = R::dispense('livre');
         $l->titre = $livre->getTitre();
@@ -84,38 +57,34 @@ class daoImplLivreRedBean implements daoLivre
         $id = R::store($l);
         R::close();
 
-        // On vérifie que la requête a bien fonctionnée et on ajoute la nouvelle Livre dans la liste de Livre
-        if ($l > 0) {
-            $livre = new Livre($id, $l['titre'], $g['nomGenre'], $a['auteur']);
-            $this->ajoutLivre($livre);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($id);
+
     }
 
     /**
      * Supprime une Livre dans la base de données
-     * @param Livre $idLivre
+     * @param int $idLivre
      */
-    public function suppressionLivreBD(Livre $idLivre): void
+    public function suppressionLivreBD(int $idLivre)
     {
-        R::setup();
-        $l = R::load('livre', $idLivre);
-        
-        // On vérifie que la requête a bien fonctionnée et on supprime la nouvelle Livre dans la liste de livres
-        if ($l > 0) {
-            $livre = $this->getLivreById($idLivre);
-            unset($livre);
-        }
-
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $l = R::load('livre', $idLivre);      
         R::trash($l);
+
         R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($l);
     }
 
 
     /**
      * Modifie une Livre dans la base de données
-     * @param Livre $idLivre
+     * @param Livre $livre
+     * @param int $idLivre
      */
-    public function modificationLivreBD(Livre $livre, Livre $idLivre): void
+    public function modificationLivreBD(Livre $livre, int $idLivre)
     {
         R::setup();
         $l = R::load('livre',$idLivre);
@@ -129,13 +98,9 @@ class daoImplLivreRedBean implements daoLivre
         $id = R::store($l, $g, $a);
         R::close();
 
+        header('Content-Type: application/json');
+        echo json_encode($id);
 
 
-        // On vérifie que la requête a bien fonctionnée et on met à jour le livre dans la liste de livres
-        if ($l > 0) {
-            $this->getLivreById($idLivre)->setTitre($livre->getTitre());
-            $this->getLivreById($idLivre)->setGenre($livre->getGenre());
-            $this->getLivreById($idLivre)->setAuteur($livre->getAuteur());
-        }
     }
 }

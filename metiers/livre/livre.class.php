@@ -13,8 +13,7 @@ class livre
 
     
 
-    function __construct(int $idLivre, string $titre, Genre $genre, Auteur $auteur) {
-    	$this->idLivre = $idLivre;
+    function __construct(string $titre, Genre $genre, Auteur $auteur) {
     	$this->titre = $titre;
     	$this->genre = $genre;
     	$this->auteur = $auteur;
