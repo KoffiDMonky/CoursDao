@@ -1,7 +1,8 @@
 <?php
 
-require_once "./metiers/livre/livre.class.php";
-require_once "./metiers/livre/DAO/livre.dao.php";
+require_once "./../metiers/livre/livre.class.php";
+require_once "./../metiers/livre/DAO/livre.dao.php";
+require_once "./../metiers/livre/DAOImpl/livre.REDBEAN.daoImpl.php";
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 
@@ -22,7 +23,9 @@ switch ($request_method) {
 
     case 'POST':
         //Ajouter un livre
-        $liv = new livre($_POST["titre"], $_POST["genre"], $_POST["auteur"]);
+        $gen = new genre($_POST["genre"]);
+        $aut = new auteur($_POST["auteur"]);
+        $liv = new livre($_POST["titre"], $gen, $aut);
         $livre->ajoutLivreBd($liv);
         header("HTTP/1.0 201 created");
         break;
@@ -30,7 +33,7 @@ switch ($request_method) {
     case 'PUT':
         //Modifier un livre
         $id = intval($_GET["id"]);
-        $liv = new livre($_POST["titre"], $_POST["genre"], $_POST["auteur"]);
+        $liv = new livre($_PUT["titre"], $_PUT["genre"], $_PUT["auteur"]);
         $livre->modificationLivreBD($liv,$id);
         break;
 

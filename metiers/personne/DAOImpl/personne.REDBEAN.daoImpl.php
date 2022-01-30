@@ -1,6 +1,7 @@
 <?php
 
-include_once "Constantes.php";
+include_once "./../constantes.php";
+require_once "./../rb.php";
 
 
 class daoImplPersonneRedBean implements daoPersonne

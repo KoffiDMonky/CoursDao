@@ -1,70 +1,40 @@
 <?php
 
+include_once "./../constantes.php";
+require_once "./../rb.php";
+
 class daoImplAuteurRedBean implements daoAuteur
 {
 
-
-    private $db; //Instance de PDO
-    private $auteurs; //tableau de auteurs
-
-    function __construct($db, $auteurs)
-    {
-        $this->db = $db;
-        $this->auteurs = $auteurs;
-    }
-
     /**
-     * Ajoute une auteur à la liste d'auteurs
-     * @param Auteur $Auteur
-     */
-
-    public function ajoutAuteur(Auteur $auteur)
-    {
-        $this->auteurs[] = $auteur;
-    }
-
-    /**
-     * Retourne tous les auteurs de la liste
+     * Retourne tous les auteurs de la BDD
      * 
      */
 
-    public function getAuteurs()
+    public function avoirAuteurs()
     {
-        return $this->auteurs;
-    }
-
-
-    /**
-     * Charge tous les auteurs contenu dans la BDD dans le tableau de auteur
-     * 
-     */
-
-    public function chargementAuteurs()
-    {
-
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $mesAuteurs = R::findAll('auteur');
         R::close();
 
-        //On créé les auteurs et on les ajoute dans le tableau "Auteurs"
-        foreach ($mesAuteurs as $auteur) {
-            $p = new Auteur($auteur['idAuteur'], $auteur['oeuvre']);
-            $this->ajoutAuteur($p);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($mesAuteurs, JSON_PRETTY_PRINT);
+
     }
 
     /**
      * Récupérer un auteur via son identifiant
-     * @param Auteur $idAuteur
+     * @param int $idAuteur
      */
 
-    public function getAuteurById(Auteur $idAuteur)
+    public function avoirAuteurParId(int $idAuteur)
     {
-        for ($i = 0; $i < count($this->auteurs); $i++) {
-            if ($this->auteurs[$i]->getId() === $idAuteur) {
-                return $this->livres[$i];
-            }
-        }
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $auteur = R::load('auteur', $idAuteur);
+        R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($auteur, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -74,7 +44,7 @@ class daoImplAuteurRedBean implements daoAuteur
     public function ajoutAuteurBd(Auteur $auteur)
     {
 
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
         $a = R::dispense('auteur');
         $a->auteur = $auteur->getNomAuteur();
@@ -82,51 +52,46 @@ class daoImplAuteurRedBean implements daoAuteur
 
         R::close();
 
-        // On vérifie que la requête a bien fonctionnée et on ajoute la nouvelle auteur dans la liste de auteur
-        if ($a > 0) {
-            $auteur = new Auteur($id, $a['nomAuteur']);
-            $this->ajoutAuteur($auteur);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($id);
+
+
     }
 
     /**
      * Supprime un auteur dans la base de données
-     * @param Auteur $idAuteur
+     * @param int $idAuteur
      */
-    public function suppressionAuteurBD(Auteur $idAuteur)
+    public function suppressionAuteurBD(int $idAuteur)
     {
-
-        R::setup();
-        $a = R::load('personne', $idAuteur);
-
-        // Si on a un bean, on supprime l'auteur dans la liste de personnes
-        if ($a > 0) {
-            $a = $this->getAuteurById($idAuteur);
-            unset($p);
-        }
-
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $a = R::load('auteur', $idAuteur);
         R::trash($a);
+
         R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($a);
     }
 
     /**
      * Modifie une personne dans la base de données
      * @param Auteur $auteur
-     * @param Auteur $idAuteur
+     * @param int $idAuteur
      */
 
-    function modificationAuteurBD(Auteur $auteur, Auteur $idAuteur)
+    function modificationAuteurBD(Auteur $auteur, int $idAuteur)
     {
 
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $a = R::load('auteur', $idAuteur);
         $a->auteur = $auteur->getNomAuteur();
-        $a->livre_id = $auteur->getId_livre();
         $id = R::store($a);
         R::close();
 
-        if ($id > 0) {
-            $this->getAuteurById($idAuteur)->setNomAuteur($auteur->getNomAuteur());
-        }
+        header('Content-Type: application/json');
+        echo json_encode($id);
+
+
     }
 }

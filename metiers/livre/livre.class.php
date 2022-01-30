@@ -1,7 +1,7 @@
 <?php
 
-require_once "metiers/genre/genre.class.php";
-require_once "metiers/auteur/auteur.class.php";
+require_once "./../metiers/genre/genre.class.php";
+require_once "./../metiers/auteur/auteur.class.php";
 
 class livre
 {
@@ -49,7 +49,7 @@ class livre
     }
 
     /**
-    * @return string
+    * @return Genre
     */
     public function getGenre(): Genre {
     	return $this->genre;
@@ -63,7 +63,7 @@ class livre
     }
 
     /**
-    * @return string
+    * @return Auteur
     */
     public function getAuteur(): Auteur {
     	return $this->auteur;

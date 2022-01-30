@@ -1,7 +1,8 @@
 <?php
 
-require_once "./metiers/personne/personne.class.php";
-require_once "./metiers/personne/DAO/personne.dao.php";
+require_once "./../metiers/personne/personne.class.php";
+require_once "./../metiers/personne/DAO/personne.dao.php";
+require_once "./../metiers/personne/DAOImpl/personne.REDBEAN.daoImpl.php";
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 

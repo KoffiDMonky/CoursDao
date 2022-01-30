@@ -1,0 +1,13 @@
+RewriteEngine On # Activer le module Rewrite
+
+RewriteRule ^personne/?$ personne.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ personne.php?id=$1
+
+RewriteRule ^livre/?$ livre.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ livre.php?id=$1
+
+RewriteRule ^genre/?$ genre.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ genre.php?id=$1
+
+RewriteRule ^auteur/?$ auteur.php [NC,L]
+RewriteRule ^[^/]+/(\d+)$ auteur.php?id=$1

@@ -1,60 +1,40 @@
 <?php
 
+include_once "./../constantes.php";
+require_once "./../rb.php";
+
+
 class daoImplGenreRedBean implements daoGenre {
-
-    
-    private $db; //Instance de PDO
-    private $genres; //tableau de genres
-
-    function __construct($db, $genres) {
-    	$this->db = $db;
-    	$this->genres = $genres;
-    
-    }
-
-    /**
-    * Ajoute un genre à la liste de genres
-    * @param Genre $genre
-    */  
-    public function ajoutGenre(Genre $genre){
-        $this->genres[] = $genre;
-    } 
 
     /**
     * Retourne tous les genres de la liste
     * 
     */
-    public function getGenres(){
-        return $this->genres;
-    }
+    public function avoirGenres(){
 
-    /**
-    * Charge tous les genres contenu dans la BDD dans le tableau de genre
-    * 
-    */
-    public function chargementGenres(){
-
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $mesGenres = R::findAll('genre');
         R::close();
 
-        //On créé les genres et on les ajoute dans le tableau "Genres"
-        foreach($mesGenres as $genre){
-            $g = new Genre($genre['idGenre'],$genre['nomGenre']);
-            $this->ajoutGenre($g);
-        }
+        header('Content-Type: application/json');
+        echo json_encode($mesGenres, JSON_PRETTY_PRINT);
+
+
     }
 
     /**
      * Récupérer un genre via son identifiant
-     * @param Genre $idGenre
+     * @param int $idGenre
      */
-    public function getGenreById(Genre $idGenre){
-        for($i=0; $i < count($this->genres);$i++){
-            if($this->genres[$i]->getId() === $idGenre){
-                return $this->livres[$i];
-            }
-        }
+    public function avoirGenreParId(int $idGenre){
+
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        
+        $genre = R::load('genre', $idGenre);
+        R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($genre, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -62,58 +42,56 @@ class daoImplGenreRedBean implements daoGenre {
      * @param Genre $genre
      */
     public function ajoutGenreBd(Genre $genre){
-        
+
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+
         $g = R::dispense('genre');
         $g->nomGenre = $genre->getNomGenre();
         $id = R::store($g);
 
         R::close();
-        
 
-        // On vérifie que la requête a bien fonctionnée et on ajoute la nouvelle genre dans la liste de genre
-        if($g > 0){ 
-            $genre = new Genre($id,$g['nomGenre']);
-            $this->ajoutGenre($genre);
-
-        }
+        header('Content-Type: application/json');
+        echo json_encode($id);
 
     }
 
     /**
      * Supprime un genre dans la base de données
-     * @param Genre $idGenre
+     * @param int $idGenre
      */
-    public function suppressionGenreBD(Genre $idGenre){
+    public function suppressionGenreBD(int $idGenre){
 
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+
         $g = R::load('genre',$idGenre);
-        
-        
-        // On vérifie que la requête a bien fonctionnée et on supprime la nouvelle genre dans la liste de genres
-        if($g > 0){
-            $genre = $this->getGenreById($idGenre);
-            unset($genre);
-        }
         R::trash($g);
+
         R::close();
+
+        header('Content-Type: application/json');
+        echo json_encode($g);
+
     }
 
     /**
      * Modifie un genre dans la base de données
      * @param Genre $genre
-     * @param Genre $idGenre
+     * @param int $idGenre
      */
 
-    function modificationGenreBD(Genre $genre, Genre $idGenre){
+    function modificationGenreBD(Genre $genre, int $idGenre){
         
-        R::setup();
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        
         $g = R::load('genre',$idGenre);
         $g->nomGenre = $genre->getNomGenre();
         $id = R::store($g);
         R::close();
 
-        if($g > 0){
-            $this->getGenreById($idGenre)->setNomGenre($genre->getNomGenre());
-        }
+        header('Content-Type: application/json');
+        echo json_encode($id);
+
+
     }
 }

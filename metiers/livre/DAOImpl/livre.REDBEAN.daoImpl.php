@@ -1,6 +1,7 @@
 <?php
 
-include_once "Constantes.php";
+include_once "./../constantes.php";
+require_once "./../rb.php";
 
 
 class daoImplLivreRedBean implements daoLivre
@@ -12,13 +13,12 @@ class daoImplLivreRedBean implements daoLivre
      */
     public function avoirLivres()
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $mesLivres = R::findAll('livre');
         R::close();
 
         header('Content-Type: application/json');
         echo json_encode($mesLivres, JSON_PRETTY_PRINT);
-
     }
 
     /**
@@ -27,7 +27,7 @@ class daoImplLivreRedBean implements daoLivre
      */
     public function avoirLivreParId(int $idLivre)
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
         $livre = R::load('livre', $idLivre);
         R::close();
 
@@ -41,17 +41,19 @@ class daoImplLivreRedBean implements daoLivre
      */
     public function ajoutLivreBd(Livre $livre)
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
+        
         $l = R::dispense('livre');
         $l->titre = $livre->getTitre();
 
         $g = R::dispense('genre');
-        $g->nomGenre = $livre->getGenre();
+        $g->nomGenre = $livre->getGenre()->getNomGenre();
         $l->sharedGenreList[] = $g;
 
+        
         $a = R::dispense('auteur');
-        $a->nomAuteur = $livre->getAuteur();
+        $a->auteur =  $livre->getAuteur()->getNomAuteur();
         $l->ownAuteurList[] = $a;
 
         $id = R::store($l);
@@ -59,7 +61,6 @@ class daoImplLivreRedBean implements daoLivre
 
         header('Content-Type: application/json');
         echo json_encode($id);
-
     }
 
     /**
@@ -68,8 +69,8 @@ class daoImplLivreRedBean implements daoLivre
      */
     public function suppressionLivreBD(int $idLivre)
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
-        $l = R::load('livre', $idLivre);      
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $l = R::load('livre', $idLivre);
         R::trash($l);
 
         R::close();
@@ -86,21 +87,19 @@ class daoImplLivreRedBean implements daoLivre
      */
     public function modificationLivreBD(Livre $livre, int $idLivre)
     {
-        R::setup();
-        $l = R::load('livre',$idLivre);
+        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        $l = R::load('livre', $idLivre);
         $g = R::dispense('genre');
         $a = R::dispense('auteur');
-        
+
 
         $l->titre = $livre->getTitre();
-        $g->nom_genre = $livre->getGenre();
-        $a->auteur = $livre->getAuteur();
+        $g->nom_genre = $livre->getGenre()->getNomGenre();
+        $a->auteur = $livre->getAuteur()->getNomAuteur();
         $id = R::store($l, $g, $a);
         R::close();
 
         header('Content-Type: application/json');
         echo json_encode($id);
-
-
     }
 }
