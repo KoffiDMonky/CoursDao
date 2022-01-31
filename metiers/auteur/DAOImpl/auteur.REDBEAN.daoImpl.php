@@ -1,6 +1,6 @@
 <?php
 
-include_once "./../constantes.php";
+include_once "./../db_connect.php";
 require_once "./../rb.php";
 
 class daoImplAuteurRedBean implements daoAuteur
