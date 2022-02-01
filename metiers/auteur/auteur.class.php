@@ -1,14 +1,14 @@
 <?php
 
+/**
+ *Classe métier Auteur
+ */
+
 class auteur
 {
     private int $idAuteur;
     private string $nomAuteur;
     private int $id_livre;
-
-
-
-    
 
     function __construct(string $nomAuteur) {
     	$this->nomAuteur = $nomAuteur;

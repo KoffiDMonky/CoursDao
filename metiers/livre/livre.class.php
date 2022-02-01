@@ -3,6 +3,11 @@
 require_once "./../metiers/genre/genre.class.php";
 require_once "./../metiers/auteur/auteur.class.php";
 
+
+/**
+ *Classe métier Livre
+ */
+
 class livre
 {
     private int $idLivre;

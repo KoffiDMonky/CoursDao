@@ -2,7 +2,7 @@
 
 require_once "./../metiers/livre/livre.class.php";
 require_once "./../metiers/livre/DAO/livre.dao.php";
-// require_once "./../metiers/livre/DAOImpl/livre.REDBEAN.daoImpl.php";
+require_once "./../metiers/livre/DAOImpl/livre.REDBEAN.daoImpl.php";
 
 /**
  *API permettant de récupérer, ajouter, modifier et supprimer des livres dans la table livre

@@ -2,7 +2,7 @@
 
 require_once "./../metiers/personne/personne.class.php";
 require_once "./../metiers/personne/DAO/personne.dao.php";
-// require_once "./../metiers/personne/DAOImpl/personne.REDBEAN.daoImpl.php";
+require_once "./../metiers/personne/DAOImpl/personne.REDBEAN.daoImpl.php";
 
 /**
  *API permettant de récupérer, ajouter, modifier et supprimer des utilisateurs dans la table personne

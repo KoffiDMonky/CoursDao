@@ -1,5 +1,9 @@
 <?php
 
+/**
+ *Classe métier Genre
+ */
+
 class genre
 {
     private int $idGenre;
