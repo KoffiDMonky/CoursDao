@@ -29,7 +29,7 @@ switch ($request_method) {
     case 'POST':
 
         //Méthode POST permettant d'ajouter un genre dans la table genre de la BDD
-        $gen = new genre($_POST["genre"]); //On créé une nouvelle instance de la classe genre, dans laquelle on passe en argument le nom du genre récupéré grâce aux variables globales $_POST["genre"]
+        $gen = new genre($_POST["genre"]); //On créé une nouvelle instance de la classe genre, dans laquelle on passe en argument le nom du genre récupéré grâce à la variable globale $_POST["genre"]
         $genre->ajoutGenreBd($gen); //Méthode permettant d'ajouter un nouveau genre en BDD, en prenant comme argument notre nouveau genre
         header("HTTP/1.0 201 created");
         break;
@@ -37,7 +37,10 @@ switch ($request_method) {
     case 'PUT':
         //Méthode PUT permettant de modifier un genre dans la table genre de la BDD
         $id = intval($_GET["id"]); //On stock l'identifiant récupéré dans la variable $id
-        $gen = new genre($_POST["genre"]); //On créé une nouvelle instance de la classe genre, dans laquelle on passe en argument le nom du genre permettant de mettre à jour un genre récupéré grâce aux variables globales $_POST["genre"]
+        $_PUT = array(); //tableau qui va contenir les données reçues
+        parse_str(file_get_contents('php://input'), $_PUT); //On récupère le contenu des inputs pour les mettres dans le tableau de $_PUT
+        $g = $_PUT["genre"]; //On stock le genre dans $g
+        $gen = new genre($g); //On créé une nouvelle instance de la classe genre, dans laquelle on passe en argument le nom du genre permettant de mettre à jour un genre récupéré grâce à la variable $g
         $genre->modificationGenreBD($gen, $id); //Méthode permettant de modifier un genre en BDD, en prenant comme argument les nouvelles données ($gen) et l'identifiant du genre ciblé ($id)
         break;
 

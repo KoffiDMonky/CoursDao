@@ -40,7 +40,12 @@ switch ($request_method) {
     case 'PUT':
         //Méthode PUT permettant de modifier un livre dans la table livre de la BDD
         $id = intval($_GET["id"]); //On stock l'identifiant récupéré dans la variable $id
-        $liv = new livre($_POST["titre"], $_POST["genre"], $_POST["auteur"]); //On créé une nouvelle instance de la classe livre, dans laquelle on passe en argument le titre, le genre et l'auteur permettant de mettre à jour un livre récupéré grâce aux variables globales $_POST["titre"],$_POST["genre"] et $_POST["auteur"]
+        $_PUT = array(); //tableau qui va contenir les données reçues
+        parse_str(file_get_contents('php://input'), $_PUT); //On récupère le contenu des inputs pour les mettres dans le tableau de $_PUT
+        $titre = $_PUT["titre"]; //On stock le titre dans $titre
+        $genre = $_PUT["genre"]; //On stock le genre dans $genre
+        $auteur = $_PUT["auteur"]; //On stock le auteur dans $auteur
+        $liv = new livre($titre, $genre, $auteur); //On créé une nouvelle instance de la classe livre, dans laquelle on passe en argument le titre, le genre et l'auteur permettant de mettre à jour un livre récupéré grâce aux variables $titre, $genre et $auteur
         $livre->modificationLivreBD($liv,$id); //Méthode permettant de modifier un livre en BDD, en prenant comme argument les nouvelles données ($liv) et l'identifiant du livre ciblé ($id)
         break;
 

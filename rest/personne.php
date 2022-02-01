@@ -15,16 +15,15 @@ $personne = new daoImplPersonneRedBean(); //On appelle une nouvelle instance de 
 switch ($request_method) {
     case 'GET': //Méthode GET permettant de récupérer une ou plusieurs personnes
 
-        if(!empty($_GET["id"]))
-        {
+        if (!empty($_GET["id"])) {
             //récupère une seule personne dans la BDD
             $id = intval($_GET["id"]); //On stock l'identifiant récupéré dans la variable $id
             $personne->avoirPersonneParId($id); //Méthode définit dans la classe daoImpPersonneRedBean permettant de récupérer une personne par son identifiant
-        
+
         } else {
 
-           $personne->avoirPersonnes(); //Méthode définit dans la classe daoImpPersonneRedBean permettant de récupérer toutes les personnes présentes dans la BDD
-        
+            $personne->avoirPersonnes(); //Méthode définit dans la classe daoImpPersonneRedBean permettant de récupérer toutes les personnes présentes dans la BDD
+
         }
         break;
 
@@ -39,21 +38,23 @@ switch ($request_method) {
     case 'PUT':
         //Méthode PUT permettant de modifier une personne dans la table personne de la BDD
         $id = intval($_GET["id"]); //On stock l'identifiant récupéré dans la variable $id
-        $pers = new personne($_POST["nom"], $_POST["prenom"]); //On créé une nouvelle instance de la classe personne, dans laquelle on passe en argument le nom et le prenom permettant de mettre à jour une personne récupéré grâce aux variables globales $_POST["nom"] et $_POST["prenom"]
-        $personne->modificationPersonneBD($pers,$id); //Méthode permettant de modifier une personne en BDD, en prenant comme argument les nouvelles données ($pers) et l'identifiant de la personne ciblé ($id)
+        $_PUT = array(); //tableau qui va contenir les données reçues
+        parse_str(file_get_contents('php://input'), $_PUT); //On récupère le contenu des inputs pour les mettres dans le tableau de $_PUT
+        $nom = $_PUT["nom"]; //On stock le nom dans $nom
+        $prenom = $_PUT["prenom"]; //On stock le prenom dans $prenom
+        $pers = new personne($nom, $prenom); //On créé une nouvelle instance de la classe personne, dans laquelle on passe en argument le nom et le prenom permettant de mettre à jour une personne récupéré grâce aux variables $nom et $prenom
+        $personne->modificationPersonneBD($pers, $id); //Méthode permettant de modifier une personne en BDD, en prenant comme argument les nouvelles données ($pers) et l'identifiant de la personne ciblé ($id)
         break;
 
     case 'DELETE':
         //Méthode DELETE permettant de supprimer une personne dans la table personne de la BDD
         $id = intval($_GET["id"]); //On stock l'identifiant récupéré dans la variable $id
-        $personne->suppressionPersonneBD($id);//Méthode permettant de supprimer une personne en BDD, en prenant comme argument l'identifiant de la personne ciblé ($id)
+        $personne->suppressionPersonneBD($id); //Méthode permettant de supprimer une personne en BDD, en prenant comme argument l'identifiant de la personne ciblé ($id)
         header("HTTP/1.0 204 request processed");
         break;
-    
+
     default:
         //Méthode de demande non valide
         header("HTTP/1.0 405 Method Not Allowed");
         break;
 }
-
-?>
