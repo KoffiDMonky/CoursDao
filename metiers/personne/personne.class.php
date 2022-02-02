@@ -9,6 +9,7 @@ class personne
     private int $idPersonne;
     private string $nom;
     private string $prenom;
+    private $collection;
     
 
     function __construct( string $nom, string $prenom) {
@@ -58,4 +59,25 @@ class personne
     public function setPrenom(string $prenom): void {
     	$this->prenom = $prenom;
     }
+
+
+    public function getCollection() {
+    	return $this->collection;
+    }
+
+    public function addLivre(Livre $livre)
+    {
+        if (!$this->collection->contains($livre)) {
+            $this->collection[] = $livre;
+        }
+
+        return $this;
+    }
+
+    public function removeLivre(Livre $livre)
+    {
+        $this->collection->removeElement($livre);
+        return $this;
+    }
+
 }

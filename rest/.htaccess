@@ -12,6 +12,9 @@ RewriteRule ^auteur/(\d+)$ auteur.php?id=$1
 RewriteRule ^genre/?$ genre.php [NC,L]
 RewriteRule ^genre/(\d+)$ genre.php?id=$1
 
+RewriteRule ^collection/?$ collection.php [NC,L]
+RewriteRule ^collection/(\d+)$ collection.php?id=$1
+
 
 
 

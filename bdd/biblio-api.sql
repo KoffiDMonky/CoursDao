@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 30 jan. 2022 à 18:34
+-- Généré le : mer. 02 fév. 2022 à 20:46
 -- Version du serveur : 10.4.22-MariaDB
 -- Version de PHP : 7.4.26
 
@@ -111,6 +111,28 @@ INSERT INTO `livre` (`id`, `titre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `livre_personne`
+--
+
+CREATE TABLE `livre_personne` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `livre_id` int(11) UNSIGNED DEFAULT NULL,
+  `personne_id` int(11) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `livre_personne`
+--
+
+INSERT INTO `livre_personne` (`id`, `livre_id`, `personne_id`) VALUES
+(7, 1, 1),
+(4, 6, 2),
+(8, 11, 1),
+(9, 11, 2);
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `personne`
 --
 
@@ -130,8 +152,7 @@ INSERT INTO `personne` (`id`, `nom`, `prenom`) VALUES
 (4, 'Jarousseau', 'marc'),
 (5, 'Kent', 'Clark'),
 (6, 'Wayne', 'Bruce'),
-(8, 'Kent', 'Clark'),
-(9, 'Doe', 'John');
+(9, 'Bauer', 'Jack');
 
 --
 -- Index pour les tables déchargées
@@ -166,6 +187,15 @@ ALTER TABLE `livre`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `livre_personne`
+--
+ALTER TABLE `livre_personne`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UQ_5b837f7d80509d3a1930d52984d055c96e99c80f` (`livre_id`,`personne_id`),
+  ADD KEY `index_foreignkey_livre_personne_livre` (`livre_id`),
+  ADD KEY `index_foreignkey_livre_personne_personne` (`personne_id`);
+
+--
 -- Index pour la table `personne`
 --
 ALTER TABLE `personne`
@@ -197,7 +227,13 @@ ALTER TABLE `genre_livre`
 -- AUTO_INCREMENT pour la table `livre`
 --
 ALTER TABLE `livre`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT pour la table `livre_personne`
+--
+ALTER TABLE `livre_personne`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `personne`

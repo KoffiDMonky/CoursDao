@@ -14,8 +14,10 @@ class daoImplPersonneRedBean implements daoPersonne
 
     public function avoirPersonnes()
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        
         $mesPersonnes = R::findAll('personne');
+        
         R::close();
 
         header('Content-Type: application/json');
@@ -30,8 +32,10 @@ class daoImplPersonneRedBean implements daoPersonne
 
     public function avoirPersonneParId(int $idPersonne)
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        
         $personne = R::load('personne', $idPersonne);
+       
         R::close();
 
         header('Content-Type: application/json');
@@ -46,7 +50,7 @@ class daoImplPersonneRedBean implements daoPersonne
 
     public function ajoutPersonneBd(Personne $personne)
     {
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
         $p = R::dispense('personne');
         $p->nom = $personne->getNom();
@@ -69,7 +73,7 @@ class daoImplPersonneRedBean implements daoPersonne
     function modificationPersonneBD(Personne $personne, int $idPersonne)
     {
 
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
         $p = R::load('personne', $idPersonne);
         $p->nom = $personne->getNom();
@@ -90,7 +94,7 @@ class daoImplPersonneRedBean implements daoPersonne
     public function suppressionPersonneBD($idPersonne)
     {
 
-        R::setup( Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
 
         $p = R::load('personne', $idPersonne);
         R::trash($p);
@@ -99,5 +103,64 @@ class daoImplPersonneRedBean implements daoPersonne
 
         header('Content-Type: application/json');
         echo json_encode($p);
+    }
+
+    /**
+     * Affiche la collection de livre d'un utilisateur
+     * @param int $idPersonne
+     */
+
+    public function afficherCollection(int $idPersonne)
+    {
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+
+        $personne = R::load('personne', $idPersonne);
+        $collection = $personne->sharedLivreList;
+
+        R::close();
+
+
+
+        header('Content-Type: application/json');
+        echo json_encode($collection, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Ajoute un livre dans la collection d'un utilisateur
+     * 
+     */
+
+    public function ajouterLivreCollection(int $idPersonne, int $idLivre)
+    {
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+
+        $l = R::load('livre', $idLivre);
+        $p = R::load('personne', $idPersonne);
+        $p->sharedLivreList[] = $l;
+
+        $id = R::store($p);
+
+        R::close();
+        echo json_encode($id, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Supprimer un livre dans la collection d'un utilisateur
+     * 
+     */
+
+    public function supprimerLivreCollection(int $idLivre, int $idPersonne)
+    {
+        R::setup(Constantes::TYPE . ':host=' . Constantes::HOST . ';dbname=' . Constantes::BASE_REDBEAN, Constantes::USER, Constantes::PASSWORD);
+
+        $l = R::load('livre', $idLivre);
+        unset($l->sharedPersonneList[$idPersonne]);
+        $id = R::store($l);
+
+        R::close();
+
+        echo json_encode($id, JSON_PRETTY_PRINT);
+
+        
     }
 }
